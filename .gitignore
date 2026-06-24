@@ -1,0 +1,7 @@
+.claude/
+config.env.php
+uploads/*.jpg
+uploads/*.png
+uploads/*.gif
+uploads/*.webp
+!uploads/.gitkeep

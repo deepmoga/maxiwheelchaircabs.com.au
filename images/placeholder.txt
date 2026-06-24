@@ -1,0 +1,24 @@
+This folder contains images for the Maxi Wheelchair Cabs website.
+
+Required images:
+- logo.png          - Company logo
+- favicon.png       - Browser favicon
+- og-image.jpg      - Social media sharing image
+- hero-bg.jpg       - Hero section background (dark taxi/road image)
+- hero-car.png      - Hero section car image (transparent PNG)
+- about-main.jpg    - About section main image
+- about-small.jpg   - About section smaller overlay image
+- service-wheelchair.jpg  - Wheelchair taxi service
+- service-airport.jpg     - Airport transfer service
+- service-babyseat.jpg    - Baby seat taxi service
+- service-wedding.jpg     - Wedding transport service
+- why-choose.jpg    - Why choose us section image
+
+Recommended dimensions:
+- hero-bg.jpg: 1920x1080px
+- hero-car.png: 600x400px (transparent background)
+- about-main.jpg: 600x400px
+- about-small.jpg: 200x200px
+- service images: 400x300px each
+- why-choose.jpg: 600x500px
+- logo.png: 200x60px
