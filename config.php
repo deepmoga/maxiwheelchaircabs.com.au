@@ -10,7 +10,7 @@ if (file_exists(__DIR__ . '/config.env.php')) {
     define('DB_NAME', 'maxiwheelchaircabs');
     define('DB_USER', 'root');
     define('DB_PASS', '');
-    define('SITE_URL', 'http://localhost');
+    define('SITE_URL', 'http://localhost/Github/maxiwheelchaircabs.com.au');
 }
 
 try {

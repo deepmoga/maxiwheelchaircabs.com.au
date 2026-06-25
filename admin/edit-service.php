@@ -34,10 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $image = $service['image'] ?? '';
+        $banner_image = $service['banner_image'] ?? '';
+        $uploadDir = __DIR__ . '/../uploads/';
 
-        // Handle image upload
+        // Handle thumbnail image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = __DIR__ . '/../uploads/';
             $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
             if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                 $filename = 'service-' . $slug . '-' . time() . '.' . $ext;
@@ -46,13 +47,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        // Handle banner image upload
+        if (isset($_FILES['banner_image']) && $_FILES['banner_image']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['banner_image']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $filename = 'service-banner-' . $slug . '-' . time() . '.' . $ext;
+                move_uploaded_file($_FILES['banner_image']['tmp_name'], $uploadDir . $filename);
+                $banner_image = 'uploads/' . $filename;
+            }
+        }
+
         try {
             if ($id) {
-                $stmt = $pdo->prepare("UPDATE services SET title=?, slug=?, short_description=?, description=?, icon=?, image=?, meta_title=?, meta_description=?, meta_keywords=?, sort_order=?, status=? WHERE id=?");
-                $stmt->execute([$title, $slug, $short_description, $description, $icon, $image, $meta_title, $meta_description, $meta_keywords, $sort_order, $status, $id]);
+                $stmt = $pdo->prepare("UPDATE services SET title=?, slug=?, short_description=?, description=?, icon=?, image=?, banner_image=?, meta_title=?, meta_description=?, meta_keywords=?, sort_order=?, status=? WHERE id=?");
+                $stmt->execute([$title, $slug, $short_description, $description, $icon, $image, $banner_image, $meta_title, $meta_description, $meta_keywords, $sort_order, $status, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO services (title, slug, short_description, description, icon, image, meta_title, meta_description, meta_keywords, sort_order, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$title, $slug, $short_description, $description, $icon, $image, $meta_title, $meta_description, $meta_keywords, $sort_order, $status]);
+                $stmt = $pdo->prepare("INSERT INTO services (title, slug, short_description, description, icon, image, banner_image, meta_title, meta_description, meta_keywords, sort_order, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$title, $slug, $short_description, $description, $icon, $image, $banner_image, $meta_title, $meta_description, $meta_keywords, $sort_order, $status]);
                 $id = $pdo->lastInsertId();
             }
             header('Location: services.php?msg=saved');
@@ -138,18 +149,30 @@ include 'includes/header.php';
             </div>
 
             <div class="admin-card">
-                <h3>Service Image</h3>
+                <h3>Thumbnail Image</h3>
+                <p style="font-size:12px;color:var(--admin-text-light);margin-top:-15px;margin-bottom:12px;">Shown on homepage & services listing cards</p>
                 <div class="mb-3">
                     <?php if (!empty($service['image'])): ?>
                     <div style="margin-bottom:12px;">
-                        <label class="form-label" style="color:var(--admin-text-light);font-size:12px;">Current Image:</label>
-                        <img src="<?php echo SITE_URL . '/' . e($service['image']); ?>" class="img-preview" style="width:100%;height:180px;object-fit:cover;margin-top:4px;display:block;">
-                        <small class="form-text text-muted"><?php echo e($service['image']); ?></small>
+                        <img src="<?php echo SITE_URL . '/' . e($service['image']); ?>" class="img-preview" style="width:100%;height:150px;object-fit:cover;display:block;">
                     </div>
                     <?php endif; ?>
-                    <label class="form-label">Upload New Image</label>
                     <input type="file" name="image" class="form-control" accept="image/*">
-                    <small class="form-text text-muted">Recommended: 400x300px. Leave empty to keep current image.</small>
+                    <small class="form-text text-muted">Recommended: 400x300px</small>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3>Banner Image</h3>
+                <p style="font-size:12px;color:var(--admin-text-light);margin-top:-15px;margin-bottom:12px;">Large image shown at top of the single service page</p>
+                <div class="mb-3">
+                    <?php if (!empty($service['banner_image'])): ?>
+                    <div style="margin-bottom:12px;">
+                        <img src="<?php echo SITE_URL . '/' . e($service['banner_image']); ?>" class="img-preview" style="width:100%;height:150px;object-fit:cover;display:block;">
+                    </div>
+                    <?php endif; ?>
+                    <input type="file" name="banner_image" class="form-control" accept="image/*">
+                    <small class="form-text text-muted">Recommended: 1200x400px. Displayed at top of service detail page.</small>
                 </div>
             </div>
 
