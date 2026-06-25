@@ -145,7 +145,7 @@ include 'includes/header.php';
             <?php foreach ($services as $i => $svc): ?>
             <div class="service-card" data-aos="fade-up" data-aos-delay="<?php echo ($i + 1) * 100; ?>">
                 <div class="service-card-img">
-                    <img src="<?php echo e($svc['image'] ?: 'images/service-default.jpg'); ?>" alt="<?php echo e($svc['title']); ?> Perth">
+                    <img src="<?php echo $base_url . '/' . e($svc['image'] ?: 'images/service-default.jpg'); ?>" alt="<?php echo e($svc['title']); ?> Perth">
                     <div class="service-icon"><i class="<?php echo e($svc['icon']); ?>"></i></div>
                 </div>
                 <div class="service-card-body">

@@ -44,7 +44,7 @@ include 'includes/header.php';
             <?php
             $top_image = !empty($service['banner_image']) ? $service['banner_image'] : (!empty($service['image']) ? $service['image'] : '');
             if ($top_image): ?>
-            <img src="<?php echo e($top_image); ?>" alt="<?php echo e($service['title']); ?>" style="width:100%;height:350px;object-fit:cover;">
+            <img src="<?php echo $base_url . '/' . e($top_image); ?>" alt="<?php echo e($service['title']); ?>" style="width:100%;height:350px;object-fit:cover;">
             <?php endif; ?>
 
             <div class="service-description">

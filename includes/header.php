@@ -23,6 +23,10 @@ $nav_services = getActiveServices();
 if (!isset($page_title)) $page_title = $settings['home_meta_title'] ?? $site_name;
 if (!isset($meta_description)) $meta_description = $settings['home_meta_description'] ?? '';
 if (!isset($meta_keywords)) $meta_keywords = $settings['home_meta_keywords'] ?? '';
+
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +52,7 @@ if (!isset($meta_keywords)) $meta_keywords = $settings['home_meta_keywords'] ?? 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>/css/style.css">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>/css/style.css?v=<?php echo time(); ?>">
 </head>
 <body>
 

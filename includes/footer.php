@@ -118,6 +118,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script>AOS.init({duration:800,easing:'ease-in-out',once:true,offset:100});</script>
-<script src="<?php echo $base_url; ?>/js/main.js"></script>
+<script src="<?php echo $base_url; ?>/js/main.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

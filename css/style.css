@@ -837,10 +837,10 @@ img {
 .service-card {
     background: var(--white);
     border-radius: var(--radius);
-    overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
     position: relative;
+    overflow: visible;
 }
 
 .service-card:hover {
@@ -850,7 +850,6 @@ img {
 
 .service-card-img {
     height: 220px;
-    overflow: hidden;
     position: relative;
 }
 
@@ -859,6 +858,7 @@ img {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+    border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .service-card:hover .service-card-img img {
@@ -869,6 +869,7 @@ img {
     position: absolute;
     bottom: -25px;
     left: 25px;
+    z-index: 5;
     width: 55px;
     height: 55px;
     background: var(--primary);
