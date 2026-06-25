@@ -143,7 +143,7 @@ include 'includes/header.php';
         </div>
         <div class="services-grid">
             <?php foreach ($services as $i => $svc): ?>
-            <div class="service-card" data-aos="fade-up" data-aos-delay="<?php echo ($i + 1) * 100; ?>">
+            <a href="<?php echo $base_url; ?>/service/<?php echo e($svc['slug']); ?>" class="service-card" data-aos="fade-up" data-aos-delay="<?php echo ($i + 1) * 100; ?>">
                 <div class="service-card-img">
                     <img src="<?php echo $base_url . '/' . e($svc['image'] ?: 'images/service-default.jpg'); ?>" alt="<?php echo e($svc['title']); ?> Perth">
                     <div class="service-icon"><i class="<?php echo e($svc['icon']); ?>"></i></div>
@@ -151,9 +151,9 @@ include 'includes/header.php';
                 <div class="service-card-body">
                     <h3><?php echo e($svc['title']); ?></h3>
                     <p><?php echo e($svc['short_description']); ?></p>
-                    <a href="<?php echo $base_url; ?>/service/<?php echo e($svc['slug']); ?>" class="service-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    <span class="service-link">Learn More <i class="fas fa-arrow-right"></i></span>
                 </div>
-            </div>
+            </a>
             <?php endforeach; ?>
         </div>
     </div>

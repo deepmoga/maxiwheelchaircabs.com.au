@@ -834,6 +834,13 @@ img {
     gap: 25px;
 }
 
+a.service-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
 .service-card {
     background: var(--white);
     border-radius: var(--radius);
@@ -1752,37 +1759,60 @@ img {
     }
 
     .hero-form {
-        border-radius: 12px;
+        border-radius: 10px;
     }
 
     .hero-form form {
-        padding: 15px 18px 18px;
+        padding: 12px 14px 14px;
     }
 
     .hero-form-header {
-        padding: 14px 18px;
+        padding: 10px 14px;
     }
 
     .hero-form-header h3 {
-        font-size: 17px;
+        font-size: 16px;
+        margin-bottom: 0;
+    }
+
+    .hero-form-header p {
+        font-size: 11px;
+        margin: 0;
     }
 
     .hero-form-header i {
-        font-size: 22px;
+        font-size: 18px;
+        margin-bottom: 2px;
+    }
+
+    .hf-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .hf-group {
+        margin-bottom: 6px;
     }
 
     .hf-group label {
-        font-size: 10px;
+        font-size: 9px;
+        margin-bottom: 2px;
     }
 
     .hf-group input,
     .hf-group textarea {
-        padding: 9px 12px;
-        font-size: 13px;
+        padding: 8px 10px;
+        font-size: 12px;
     }
 
-    .hf-group {
-        margin-bottom: 10px;
+    .hf-group textarea {
+        rows: 1;
+    }
+
+    .hf-submit {
+        padding: 10px;
+        font-size: 13px;
+        margin-top: 2px;
     }
 
     .hero-features {
@@ -1901,8 +1931,8 @@ img {
     }
 
     .hf-row {
-        grid-template-columns: 1fr;
-        gap: 0;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
     }
 
     .hero-form form {
