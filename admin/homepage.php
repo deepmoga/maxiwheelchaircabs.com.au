@@ -24,14 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'whychoose_image_file' => ['whychoose_image', 'why-choose'],
     ];
 
-    $uploadDir = __DIR__ . '/../images/';
+    $uploadDir = __DIR__ . '/../uploads/';
     foreach ($imageFields as $fileKey => $config) {
         if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
             $ext = strtolower(pathinfo($_FILES[$fileKey]['name'], PATHINFO_EXTENSION));
             if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                $filename = $config[1] . '.' . $ext;
+                $filename = $config[1] . '-' . time() . '.' . $ext;
                 move_uploaded_file($_FILES[$fileKey]['tmp_name'], $uploadDir . $filename);
-                $stmt->execute([$config[0], 'images/' . $filename]);
+                $stmt->execute([$config[0], 'uploads/' . $filename]);
             }
         }
     }
@@ -71,7 +71,7 @@ include 'includes/header.php';
                 <label class="form-label">Hero Background Image</label>
                 <input type="file" name="hero_image_file" class="form-control" accept="image/*">
                 <?php if (!empty($s['hero_image'])): ?>
-                <img src="../<?php echo e($s['hero_image']); ?>" class="img-preview" style="margin-top:8px;">
+                <img src="<?php echo SITE_URL . '/' . e($s['hero_image']); ?>" class="img-preview" style="margin-top:8px;">
                 <?php endif; ?>
                 <small class="form-text text-muted">Dark background image behind the hero text (1920x1080 recommended)</small>
             </div>
@@ -79,7 +79,7 @@ include 'includes/header.php';
                 <label class="form-label">Hero Car Image (right side)</label>
                 <input type="file" name="hero_car_file" class="form-control" accept="image/*">
                 <?php if (!empty($s['hero_car_image'])): ?>
-                <img src="../<?php echo e($s['hero_car_image']); ?>" class="img-preview" style="margin-top:8px;">
+                <img src="<?php echo SITE_URL . '/' . e($s['hero_car_image']); ?>" class="img-preview" style="margin-top:8px;">
                 <?php endif; ?>
                 <small class="form-text text-muted">Car/taxi image shown on the right side of hero (600x400, transparent PNG recommended)</small>
             </div>
@@ -102,14 +102,14 @@ include 'includes/header.php';
                 <label class="form-label">About Main Image</label>
                 <input type="file" name="about_image_file" class="form-control" accept="image/*">
                 <?php if (!empty($s['about_image'])): ?>
-                <img src="../<?php echo e($s['about_image']); ?>" class="img-preview" style="margin-top:8px;">
+                <img src="<?php echo SITE_URL . '/' . e($s['about_image']); ?>" class="img-preview" style="margin-top:8px;">
                 <?php endif; ?>
             </div>
             <div class="col-md-6">
                 <label class="form-label">About Small Image (overlay)</label>
                 <input type="file" name="about_image_small_file" class="form-control" accept="image/*">
                 <?php if (!empty($s['about_image_small'])): ?>
-                <img src="../<?php echo e($s['about_image_small']); ?>" class="img-preview" style="margin-top:8px;">
+                <img src="<?php echo SITE_URL . '/' . e($s['about_image_small']); ?>" class="img-preview" style="margin-top:8px;">
                 <?php endif; ?>
             </div>
             <div class="col-12">
@@ -131,7 +131,7 @@ include 'includes/header.php';
                 <label class="form-label">Section Image</label>
                 <input type="file" name="whychoose_image_file" class="form-control" accept="image/*">
                 <?php if (!empty($s['whychoose_image'])): ?>
-                <img src="../<?php echo e($s['whychoose_image']); ?>" class="img-preview" style="margin-top:8px;">
+                <img src="<?php echo SITE_URL . '/' . e($s['whychoose_image']); ?>" class="img-preview" style="margin-top:8px;">
                 <?php endif; ?>
             </div>
             <div class="col-12">
