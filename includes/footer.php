@@ -101,6 +101,9 @@
                 <a href="<?php echo $base_url; ?>/terms-conditions">Terms & Conditions</a>
             </div>
         </div>
+        <div style="text-align:center;padding:12px 0 5px;font-size:12px;color:rgba(255,255,255,0.4);">
+            Made with <span style="color:#e74c3c;">&hearts;</span> by <a href="https://officialdigitalmarketing.in/" target="_blank" rel="noopener" style="color:var(--primary);font-weight:600;">Official Digital Marketing</a>
+        </div>
     </div>
 </footer>
 
