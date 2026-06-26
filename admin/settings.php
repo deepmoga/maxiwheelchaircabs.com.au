@@ -17,10 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Handle logo upload
     if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = __DIR__ . '/../images/';
+        $uploadDir = __DIR__ . '/../uploads/';
         $ext = strtolower(pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION));
         if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
-            move_uploaded_file($_FILES['logo']['tmp_name'], $uploadDir . 'logo.' . $ext);
+            $logoName = 'logo-' . time() . '.' . $ext;
+            move_uploaded_file($_FILES['logo']['tmp_name'], $uploadDir . $logoName);
+            $stmt->execute(['site_logo', 'uploads/' . $logoName]);
         }
     }
 
@@ -48,8 +50,12 @@ include 'includes/header.php';
             </div>
             <div class="col-md-6">
                 <label class="form-label">Logo Upload</label>
+                <?php $currentLogo = $s['site_logo'] ?? 'images/logo.png'; ?>
+                <div style="margin-bottom:8px;padding:10px;background:#f8f9fa;border-radius:8px;display:inline-block;">
+                    <img src="<?php echo SITE_URL . '/' . e($currentLogo); ?>" alt="Current Logo" style="max-height:60px;max-width:200px;">
+                </div>
                 <input type="file" name="logo" class="form-control" accept="image/*">
-                <small class="form-text text-muted">Current logo is in images/logo.png</small>
+                <small class="form-text text-muted">Upload a new logo to replace the current one</small>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Phone Number 1</label>

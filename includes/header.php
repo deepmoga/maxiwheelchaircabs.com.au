@@ -91,7 +91,7 @@ header('Expires: 0');
 <header class="header" id="header">
     <div class="container">
         <a href="<?php echo $base_url; ?>/" class="logo">
-            <img src="<?php echo $base_url; ?>/images/logo.png" alt="<?php echo e($site_name); ?>" onerror="this.style.display='none'">
+            <img src="<?php echo $base_url . '/' . e($settings['site_logo'] ?? 'images/logo.png'); ?>" alt="<?php echo e($site_name); ?>" onerror="this.style.display='none'">
             
         </a>
 
