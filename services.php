@@ -29,7 +29,7 @@ include 'includes/header.php';
         </div>
         <div class="services-grid">
             <?php foreach ($services as $i => $svc): ?>
-            <a href="<?php echo $base_url; ?>/service/<?php echo e($svc['slug']); ?>" class="service-card" data-aos="fade-up" data-aos-delay="<?php echo ($i + 1) * 100; ?>">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="<?php echo ($i + 1) * 100; ?>">
                 <div class="service-card-img">
                     <img src="<?php echo $base_url . '/' . e($svc['image'] ?: 'images/service-default.jpg'); ?>" alt="<?php echo e($svc['title']); ?>">
                     <div class="service-icon"><i class="<?php echo e($svc['icon']); ?>"></i></div>
@@ -37,9 +37,12 @@ include 'includes/header.php';
                 <div class="service-card-body">
                     <h3><?php echo e($svc['title']); ?></h3>
                     <p><?php echo e($svc['short_description']); ?></p>
-                    <span class="service-link">Learn More <i class="fas fa-arrow-right"></i></span>
                 </div>
-            </a>
+                <div class="service-card-footer">
+                    <a href="<?php echo $base_url; ?>/service/<?php echo e($svc['slug']); ?>" class="svc-btn-learn"><i class="fas fa-arrow-right"></i> Learn More</a>
+                    <button type="button" class="svc-btn-book open-booking-modal" data-service="<?php echo e($svc['title']); ?>"><i class="fas fa-calendar-check"></i> Book Now</button>
+                </div>
+            </div>
             <?php endforeach; ?>
         </div>
     </div>

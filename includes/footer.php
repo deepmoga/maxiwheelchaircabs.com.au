@@ -116,6 +116,65 @@
     <i class="fas fa-arrow-up"></i>
 </button>
 
+<!-- Booking Modal -->
+<div class="booking-modal-overlay" id="bookingModal">
+    <div class="booking-modal">
+        <button class="booking-modal-close" id="closeBookingModal"><i class="fas fa-times"></i></button>
+        <div class="hero-form">
+            <div class="hero-form-header">
+                <i class="fas fa-taxi"></i>
+                <h3>Book Your Ride Now</h3>
+                <p>Quick, easy and free to request</p>
+            </div>
+            <form id="modalBookingForm">
+                <input type="hidden" name="service" id="modalServiceField" value="">
+                <div class="hf-row">
+                    <div class="hf-group">
+                        <label><i class="fas fa-user"></i> Name *</label>
+                        <input type="text" name="name" required placeholder="Your full name">
+                    </div>
+                    <div class="hf-group">
+                        <label><i class="fas fa-phone"></i> Phone *</label>
+                        <input type="tel" name="phone" required placeholder="Phone number">
+                    </div>
+                </div>
+                <div class="hf-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" name="email" placeholder="Email address">
+                </div>
+                <div class="hf-row">
+                    <div class="hf-group">
+                        <label><i class="fas fa-map-marker-alt"></i> From *</label>
+                        <input type="text" name="pickup_location" required placeholder="Pickup location">
+                    </div>
+                    <div class="hf-group">
+                        <label><i class="fas fa-flag-checkered"></i> To *</label>
+                        <input type="text" name="dropoff_location" required placeholder="Drop-off location">
+                    </div>
+                </div>
+                <div class="hf-row">
+                    <div class="hf-group">
+                        <label><i class="fas fa-calendar"></i> Date *</label>
+                        <input type="date" name="travel_date" required>
+                    </div>
+                    <div class="hf-group">
+                        <label><i class="fas fa-clock"></i> Time *</label>
+                        <input type="time" name="travel_time" required>
+                    </div>
+                </div>
+                <div class="hf-group">
+                    <label><i class="fas fa-comment-dots"></i> Message</label>
+                    <textarea name="message" rows="2" placeholder="Special requirements or notes..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary hf-submit" id="modalFormBtn">
+                    <i class="fas fa-paper-plane"></i> Request a Ride
+                </button>
+            </form>
+            <div id="modalFormMsg" class="hf-message" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script>AOS.init({duration:800,easing:'ease-in-out',once:true,offset:100});</script>
 <script src="<?php echo $base_url; ?>/js/main.js?v=<?php echo time(); ?>"></script>

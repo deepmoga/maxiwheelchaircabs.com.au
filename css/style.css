@@ -834,20 +834,15 @@ img {
     gap: 25px;
 }
 
-a.service-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-}
-
 .service-card {
     background: var(--white);
-    border-radius: var(--radius);
+    border-radius: 16px;
     box-shadow: var(--shadow);
     transition: var(--transition);
     position: relative;
     overflow: visible;
+    display: flex;
+    flex-direction: column;
 }
 
 .service-card:hover {
@@ -858,6 +853,8 @@ a.service-card {
 .service-card-img {
     height: 220px;
     position: relative;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
 }
 
 .service-card-img img {
@@ -865,7 +862,6 @@ a.service-card {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
-    border-radius: var(--radius) var(--radius) 0 0;
 }
 
 .service-card:hover .service-card-img img {
@@ -874,52 +870,153 @@ a.service-card {
 
 .service-card-img .service-icon {
     position: absolute;
-    bottom: -25px;
-    left: 25px;
+    bottom: 15px;
+    left: 20px;
     z-index: 5;
-    width: 55px;
-    height: 55px;
+    width: 50px;
+    height: 50px;
     background: var(--primary);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 22px;
     color: var(--secondary);
     box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-    z-index: 2;
 }
 
 .service-card-body {
-    padding: 40px 25px 25px;
+    padding: 22px 22px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .service-card-body h3 {
     font-size: 19px;
     font-weight: 700;
     color: var(--secondary);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .service-card-body p {
     font-size: 14px;
     color: var(--text-light);
     line-height: 1.7;
-    margin-bottom: 18px;
+    margin-bottom: 15px;
+    flex: 1;
 }
 
-.service-card-body .service-link {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--primary-dark);
-    display: inline-flex;
+.service-card-footer {
+    display: flex;
+    border-top: 1px solid var(--light-gray);
+}
+
+.service-card-footer a,
+.service-card-footer button {
+    flex: 1;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
+    padding: 14px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
 }
 
-.service-card-body .service-link:hover {
-    gap: 12px;
+.service-card-footer .svc-btn-learn {
+    color: var(--primary-dark);
+    background: transparent;
+    border-right: 1px solid var(--light-gray);
+    border-radius: 0 0 0 16px;
+}
+
+.service-card-footer .svc-btn-learn:hover {
+    background: var(--light-bg);
     color: var(--secondary);
+}
+
+.service-card-footer .svc-btn-book {
+    color: var(--secondary);
+    background: var(--primary);
+    border-radius: 0 0 16px 0;
+}
+
+.service-card-footer .svc-btn-book:hover {
+    background: var(--primary-dark);
+}
+
+/* Booking Modal */
+.booking-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.booking-modal-overlay.active {
+    display: flex;
+}
+
+.booking-modal {
+    background: var(--white);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.booking-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.1);
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary);
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.booking-modal-close:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+@media (max-width: 480px) {
+    .booking-modal {
+        max-height: 85vh;
+    }
+    .booking-modal .hero-form form {
+        padding: 12px 14px 14px;
+    }
+    .booking-modal .hf-group {
+        margin-bottom: 6px;
+    }
 }
 
 /* ========================================

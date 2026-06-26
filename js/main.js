@@ -245,4 +245,78 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- Booking Modal ---
+    var modal = document.getElementById('bookingModal');
+    var closeBtn = document.getElementById('closeBookingModal');
+    var serviceField = document.getElementById('modalServiceField');
+
+    if (modal) {
+        document.querySelectorAll('.open-booking-modal').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var serviceName = this.getAttribute('data-service') || '';
+                if (serviceField) serviceField.value = serviceName;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Modal form AJAX
+        var modalForm = document.getElementById('modalBookingForm');
+        if (modalForm) {
+            modalForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var btn = document.getElementById('modalFormBtn');
+                var msgDiv = document.getElementById('modalFormMsg');
+                var originalText = btn.innerHTML;
+
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                msgDiv.style.display = 'none';
+
+                fetch('ajax-booking.php', {
+                    method: 'POST',
+                    body: new FormData(modalForm)
+                })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    msgDiv.style.display = 'block';
+                    if (data.success) {
+                        msgDiv.className = 'hf-message success';
+                        msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                        modalForm.reset();
+                        modalForm.style.display = 'none';
+                    } else {
+                        msgDiv.className = 'hf-message error';
+                        msgDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                })
+                .catch(function () {
+                    msgDiv.style.display = 'block';
+                    msgDiv.className = 'hf-message error';
+                    msgDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Something went wrong. Please call us directly.';
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                });
+            });
+        }
+    }
+
 });

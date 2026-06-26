@@ -7,144 +7,6 @@ $meta_keywords = 'contact taxi Perth, book taxi Perth, wheelchair cab booking, t
 
 $services = getActiveServices();
 
-$form_success = '';
-$form_error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_inquiry'])) {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $service = trim($_POST['service'] ?? '');
-    $pickup = trim($_POST['pickup_location'] ?? '');
-    $dropoff = trim($_POST['dropoff_location'] ?? '');
-    $travel_date = trim($_POST['travel_date'] ?? '');
-    $passengers = trim($_POST['passengers'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-
-    if (empty($name) || empty($phone)) {
-        $form_error = 'Please fill in your name and phone number.';
-    } else {
-        try {
-            $stmt = $pdo->prepare("INSERT INTO inquiries (name, email, phone, service, pickup_location, dropoff_location, travel_date, passengers, message) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $email, $phone, $service, $pickup, $dropoff, $travel_date, $passengers, $message]);
-
-            // Send email
-            $emailSent = false;
-            try {
-                require_once 'phpmailer/autoload.php';
-                $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-
-                $smtp_host = getSetting('smtp_host', 'smtp.gmail.com');
-                $smtp_port = getSetting('smtp_port', '587');
-                $smtp_user = getSetting('smtp_username', '');
-                $smtp_pass = getSetting('smtp_password', '');
-                $from_email = getSetting('smtp_from_email', '');
-                $from_name = getSetting('smtp_from_name', 'Maxi Wheelchair Cabs');
-                $admin_email = getSetting('admin_email', '');
-
-                $mail->isSMTP();
-                $mail->Host = $smtp_host;
-                $mail->SMTPAuth = true;
-                $mail->Username = $smtp_user;
-                $mail->Password = $smtp_pass;
-                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = (int)$smtp_port;
-
-                $mail->setFrom($from_email, $from_name);
-                $mail->addAddress($admin_email);
-                $mail->addReplyTo($email ?: $from_email, $name);
-
-                $mail->isHTML(true);
-                $mail->Subject = 'New Booking Inquiry from ' . $name;
-
-                $mail->Body = getEmailTemplate($name, $email, $phone, $service, $pickup, $dropoff, $travel_date, $passengers, $message);
-                $mail->AltBody = "New inquiry from $name\nPhone: $phone\nEmail: $email\nService: $service\nPickup: $pickup\nDropoff: $dropoff\nDate: $travel_date\nPassengers: $passengers\nMessage: $message";
-
-                $mail->send();
-
-                // Send confirmation to customer
-                if ($email) {
-                    $mail->clearAddresses();
-                    $mail->addAddress($email, $name);
-                    $mail->Subject = 'Booking Inquiry Received - ' . $from_name;
-                    $mail->Body = getCustomerEmailTemplate($name, $service, $from_name, $phone_1);
-                    $mail->AltBody = "Hi $name, thank you for contacting $from_name. We have received your inquiry and will get back to you shortly.";
-                    $mail->send();
-                }
-
-                $emailSent = true;
-            } catch (Exception $e) {
-                // Email failed but inquiry saved to database
-            }
-
-            $form_success = 'Thank you! Your booking inquiry has been submitted successfully. We will get back to you shortly.';
-            $name = $email = $phone = $service = $pickup = $dropoff = $travel_date = $passengers = $message = '';
-
-        } catch (PDOException $e) {
-            $form_error = 'Something went wrong. Please try again or call us directly.';
-        }
-    }
-}
-
-function getEmailTemplate($name, $email, $phone, $service, $pickup, $dropoff, $date, $passengers, $message) {
-    return '<!DOCTYPE html>
-    <html>
-    <head><meta charset="UTF-8"></head>
-    <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:30px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
-        <tr><td style="background:#1a1a2e;padding:30px 40px;text-align:center;">
-            <h1 style="color:#FFC107;margin:0;font-size:22px;">Maxi Wheelchair Cabs</h1>
-            <p style="color:rgba(255,255,255,0.7);margin:5px 0 0;font-size:13px;">New Booking Inquiry</p>
-        </td></tr>
-        <tr><td style="padding:35px 40px;">
-            <h2 style="color:#1a1a2e;margin:0 0 20px;font-size:18px;">New Inquiry from ' . htmlspecialchars($name) . '</h2>
-            <table width="100%" cellpadding="8" cellspacing="0" style="font-size:14px;color:#333;">
-                <tr style="background:#f8f9fa;"><td style="font-weight:bold;width:140px;padding:12px;border-bottom:1px solid #eee;">Name</td><td style="padding:12px;border-bottom:1px solid #eee;">' . htmlspecialchars($name) . '</td></tr>
-                <tr><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Phone</td><td style="padding:12px;border-bottom:1px solid #eee;"><a href="tel:' . htmlspecialchars($phone) . '" style="color:#1a1a2e;font-weight:bold;">' . htmlspecialchars($phone) . '</a></td></tr>
-                <tr style="background:#f8f9fa;"><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Email</td><td style="padding:12px;border-bottom:1px solid #eee;">' . htmlspecialchars($email ?: 'Not provided') . '</td></tr>
-                <tr><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Service</td><td style="padding:12px;border-bottom:1px solid #eee;"><span style="background:#FFC107;color:#1a1a2e;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:bold;">' . htmlspecialchars($service ?: 'General') . '</span></td></tr>
-                <tr style="background:#f8f9fa;"><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Pickup</td><td style="padding:12px;border-bottom:1px solid #eee;">' . htmlspecialchars($pickup ?: 'Not specified') . '</td></tr>
-                <tr><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Drop-off</td><td style="padding:12px;border-bottom:1px solid #eee;">' . htmlspecialchars($dropoff ?: 'Not specified') . '</td></tr>
-                <tr style="background:#f8f9fa;"><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Travel Date</td><td style="padding:12px;border-bottom:1px solid #eee;">' . htmlspecialchars($date ?: 'Not specified') . '</td></tr>
-                <tr><td style="font-weight:bold;padding:12px;border-bottom:1px solid #eee;">Passengers</td><td style="padding:12px;border-bottom:1px solid #eee;">' . htmlspecialchars($passengers ?: 'Not specified') . '</td></tr>
-            </table>
-            ' . ($message ? '<div style="margin-top:20px;padding:15px;background:#f8f9fa;border-radius:8px;border-left:4px solid #FFC107;"><strong style="color:#1a1a2e;">Message:</strong><p style="margin:8px 0 0;color:#555;line-height:1.6;">' . nl2br(htmlspecialchars($message)) . '</p></div>' : '') . '
-        </td></tr>
-        <tr><td style="background:#f8f9fa;padding:20px 40px;text-align:center;font-size:12px;color:#999;">
-            This inquiry was submitted via the website contact form.<br>
-            &copy; ' . date('Y') . ' Maxi Wheelchair Cabs Perth
-        </td></tr>
-    </table>
-    </body></html>';
-}
-
-function getCustomerEmailTemplate($name, $service, $company, $phone) {
-    return '<!DOCTYPE html>
-    <html>
-    <head><meta charset="UTF-8"></head>
-    <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:30px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
-        <tr><td style="background:#1a1a2e;padding:30px 40px;text-align:center;">
-            <h1 style="color:#FFC107;margin:0;font-size:22px;">' . htmlspecialchars($company) . '</h1>
-            <p style="color:rgba(255,255,255,0.7);margin:5px 0 0;font-size:13px;">Booking Confirmation</p>
-        </td></tr>
-        <tr><td style="padding:35px 40px;">
-            <h2 style="color:#1a1a2e;margin:0 0 15px;font-size:20px;">Thank You, ' . htmlspecialchars($name) . '!</h2>
-            <p style="color:#555;line-height:1.8;font-size:15px;">We have received your booking inquiry' . ($service ? ' for <strong>' . htmlspecialchars($service) . '</strong>' : '') . ' and our team is reviewing it now.</p>
-            <p style="color:#555;line-height:1.8;font-size:15px;">One of our friendly staff will be in touch with you shortly to confirm your ride details.</p>
-            <div style="margin:25px 0;padding:20px;background:#FFC107;border-radius:10px;text-align:center;">
-                <p style="margin:0;color:#1a1a2e;font-size:14px;font-weight:bold;">Need it sooner? Call us directly:</p>
-                <p style="margin:8px 0 0;font-size:24px;font-weight:bold;color:#1a1a2e;">' . htmlspecialchars($phone) . '</p>
-            </div>
-            <p style="color:#999;font-size:13px;line-height:1.6;">We are available 24 hours a day, 7 days a week. Do not hesitate to call if you have any questions.</p>
-        </td></tr>
-        <tr><td style="background:#f8f9fa;padding:20px 40px;text-align:center;font-size:12px;color:#999;">
-            &copy; ' . date('Y') . ' ' . htmlspecialchars($company) . ' | Perth, Western Australia
-        </td></tr>
-    </table>
-    </body></html>';
-}
-
 include 'includes/header.php';
 ?>
 
@@ -210,82 +72,103 @@ include 'includes/header.php';
                 </div>
             </div>
 
-            <!-- Contact Form -->
-            <div class="contact-form" data-aos="fade-left">
-                <h3>Book Your Ride</h3>
-                <p>Fill in the details below and we will get back to you as soon as possible.</p>
-
-                <?php if ($form_success): ?>
-                <div class="form-alert success"><i class="fas fa-check-circle"></i> <?php echo e($form_success); ?></div>
-                <?php endif; ?>
-                <?php if ($form_error): ?>
-                <div class="form-alert error"><i class="fas fa-exclamation-circle"></i> <?php echo e($form_error); ?></div>
-                <?php endif; ?>
-
-                <form method="POST" action="">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Full Name *</label>
-                            <input type="text" id="name" name="name" value="<?php echo e($name ?? ''); ?>" required placeholder="Your full name">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone Number *</label>
-                            <input type="tel" id="phone" name="phone" value="<?php echo e($phone ?? ''); ?>" required placeholder="Your phone number">
-                        </div>
+            <!-- Booking Form (same style as hero) -->
+            <div data-aos="fade-left">
+                <div class="hero-form" style="border-radius:16px;box-shadow:var(--shadow);">
+                    <div class="hero-form-header">
+                        <i class="fas fa-taxi"></i>
+                        <h3>Book Your Ride</h3>
+                        <p>Fill in the details and we will get back to you</p>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" value="<?php echo e($email ?? ''); ?>" placeholder="Your email">
+                    <form id="contactBookingForm">
+                        <div class="hf-row">
+                            <div class="hf-group">
+                                <label><i class="fas fa-user"></i> Name *</label>
+                                <input type="text" name="name" required placeholder="Your full name">
+                            </div>
+                            <div class="hf-group">
+                                <label><i class="fas fa-phone"></i> Phone *</label>
+                                <input type="tel" name="phone" required placeholder="Phone number">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="service">Service Required</label>
-                            <select id="service" name="service">
-                                <option value="">Select a service</option>
-                                <?php foreach ($services as $svc): ?>
-                                <option value="<?php echo e($svc['title']); ?>" <?php echo (isset($service) && $service === $svc['title']) ? 'selected' : ''; ?>><?php echo e($svc['title']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                        <div class="hf-group">
+                            <label><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" name="email" placeholder="Email address">
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="pickup_location">Pickup Location</label>
-                            <input type="text" id="pickup_location" name="pickup_location" value="<?php echo e($pickup ?? ''); ?>" placeholder="Where do we pick you up?">
+                        <div class="hf-row">
+                            <div class="hf-group">
+                                <label><i class="fas fa-map-marker-alt"></i> From *</label>
+                                <input type="text" name="pickup_location" required placeholder="Pickup location">
+                            </div>
+                            <div class="hf-group">
+                                <label><i class="fas fa-flag-checkered"></i> To *</label>
+                                <input type="text" name="dropoff_location" required placeholder="Drop-off location">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="dropoff_location">Drop-off Location</label>
-                            <input type="text" id="dropoff_location" name="dropoff_location" value="<?php echo e($dropoff ?? ''); ?>" placeholder="Where are you going?">
+                        <div class="hf-row">
+                            <div class="hf-group">
+                                <label><i class="fas fa-calendar"></i> Date *</label>
+                                <input type="date" name="travel_date" required>
+                            </div>
+                            <div class="hf-group">
+                                <label><i class="fas fa-clock"></i> Time *</label>
+                                <input type="time" name="travel_time" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="travel_date">Travel Date & Time</label>
-                            <input type="datetime-local" id="travel_date" name="travel_date" value="<?php echo e($travel_date ?? ''); ?>">
+                        <div class="hf-group">
+                            <label><i class="fas fa-comment-dots"></i> Message</label>
+                            <textarea name="message" rows="3" placeholder="Special requirements or notes..."></textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="passengers">Number of Passengers</label>
-                            <select id="passengers" name="passengers">
-                                <option value="">Select</option>
-                                <?php for ($p = 1; $p <= 13; $p++): ?>
-                                <option value="<?php echo $p; ?>" <?php echo (isset($passengers) && $passengers == $p) ? 'selected' : ''; ?>><?php echo $p; ?> <?php echo $p === 1 ? 'Passenger' : 'Passengers'; ?></option>
-                                <?php endfor; ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Additional Message</label>
-                        <textarea id="message" name="message" rows="4" placeholder="Any special requirements or notes..."><?php echo e($message ?? ''); ?></textarea>
-                    </div>
-                    <div class="form-submit">
-                        <button type="submit" name="submit_inquiry" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Submit Booking Inquiry
+                        <button type="submit" class="btn btn-primary hf-submit" id="contactFormBtn">
+                            <i class="fas fa-paper-plane"></i> Submit Booking Request
                         </button>
-                    </div>
-                </form>
+                    </form>
+                    <div id="contactFormMsg" class="hf-message" style="display:none;"></div>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('contactBookingForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var btn = document.getElementById('contactFormBtn');
+            var msgDiv = document.getElementById('contactFormMsg');
+            var orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            msgDiv.style.display = 'none';
+
+            fetch('ajax-booking.php', { method: 'POST', body: new FormData(form) })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                msgDiv.style.display = 'block';
+                if (data.success) {
+                    msgDiv.className = 'hf-message success';
+                    msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                    form.reset();
+                    form.style.display = 'none';
+                } else {
+                    msgDiv.className = 'hf-message error';
+                    msgDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+                }
+                btn.disabled = false;
+                btn.innerHTML = orig;
+            })
+            .catch(function() {
+                msgDiv.style.display = 'block';
+                msgDiv.className = 'hf-message error';
+                msgDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Something went wrong. Please call us directly.';
+                btn.disabled = false;
+                btn.innerHTML = orig;
+            });
+        });
+    }
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>

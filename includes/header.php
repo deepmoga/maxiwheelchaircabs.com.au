@@ -108,8 +108,6 @@ header('Expires: 0');
                     <li><a href="<?php echo $base_url; ?>/services"><i class="fas fa-th-list"></i> All Services</a></li>
                 </ul>
             </li>
-            <li><a href="<?php echo $base_url; ?>/#why-choose">Why Us</a></li>
-            <li><a href="<?php echo $base_url; ?>/#testimonials">Reviews</a></li>
             <li><a href="<?php echo $base_url; ?>/contact" class="<?php echo basename($_SERVER['PHP_SELF']) == 'contact.php' ? 'active' : ''; ?>">Contact</a></li>
         </ul>
 
